@@ -32,16 +32,29 @@ struct TabsScreen: View {
     }
     
     var body: some View {
-        TabView(selection: $stack.map { TabComponent($0.active.instance) }) {
+        TabView(selection: $stack.map {TabComponent($0.active.instance)}
+            .bind { feature in
+                switch feature {
+                    case .feature1:
+                        component.onFeature1TabClicked()
+                    case .feature2:
+                        component.onFeature2TabClicked()
+                    case .feature3:
+                        component.onFeature3TabClicked()
+                }
+            }
+        ) {
             Group {
                 if case let feature1 = stack.active.instance as? TabsComponentChild.Feature1Child,
                    let feature1 {
                     Feature1Screen(component: feature1.component)
+                } else {
+                    Spacer()
                 }
             }
             .tag(TabComponent.feature1)
             .tabItem {
-                Button(action: component.onFeature1TabClicked) {
+                VStack {
                     Image(systemName: "printer")
                     Text("Feature 1")
                 }
@@ -50,7 +63,7 @@ struct TabsScreen: View {
             Text("Feature 2")
                 .tag(TabComponent.feature2)
                 .tabItem {
-                    Button(action: component.onFeature2TabClicked) {
+                    VStack {
                         Image(systemName: "scanner.fill")
                         Text("Feature 2")
                     }
@@ -59,7 +72,7 @@ struct TabsScreen: View {
             Text("Feature 3")
                 .tag(TabComponent.feature3)
                 .tabItem {
-                    Button(action: component.onFeature3TabClicked) {
+                    VStack {
                         Image(systemName: "desktopcomputer")
                         Text("Feature 3")
                     }
